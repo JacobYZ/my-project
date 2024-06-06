@@ -1,0 +1,62 @@
+microservices:
+  # This file is used to define the configuration of the tutorial
+  - app: user-authentication
+    port: 9000
+    # The version of the tutorial
+    version: 1.7
+    deployed: on
+  - app: user-management
+    port: 9001
+    versions: [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
+    deployed: on
+
+microservices1:
+  - user-authentication
+  - user-management
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.14.2
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: nginx-persistent-storage
+          mountPath: /usr/share/nginx/html
+    - name: sidecar-container
+      image: curlimages/curl:7.77.0
+      command: ["/bin/sh"]
+      args:
+        [
+          "-c",
+          "while true; do echo 'Hello from the sidecar container' >> /usr/share/nginx/html/index.html; sleep 10; done",
+        ]
+      volumeMounts:
+        - name: nginx-persistent-storage
+          mountPath: /usr/share/nginx/html
+
+multilineString: |
+  This is a multiline string
+  that spans multiple lines
+  and is indented
+  in the output.
+
+singleLineString: >-
+  This is a single line string that is
+  very long and will be wrapped in the output.
+
+command:
+  - sh
+  - -c
+  - |
+    #!/usr/bin/env bash -e
+    http () {
+      curl -s -o /dev/null -w "%{http_code}" $@
+    }
+    http http://localhost:8080/healthz
