@@ -25,6 +25,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
+      - name: List contents of build/libs
+        run: ls -l ./build/libs
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
